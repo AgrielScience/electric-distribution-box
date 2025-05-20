@@ -4,33 +4,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Просмотр схемы (адаптивный)</title>
+  <title>Интерактивный электрощит</title>
   <style>
     body {
       margin: 0;
+      background: #f0f0f0;
       font-family: sans-serif;
-      background: #f7f7f7;
     }
+
     .container {
       position: relative;
-      max-width: 100%;
-      width: 100%;
-      margin: 0 auto;
-      background: #fff;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
     }
+
     .container img {
-      width: 100%;
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
       display: block;
     }
+
     .zone {
       position: absolute;
       border-radius: 6px;
       cursor: pointer;
       transition: background-color 0.2s ease;
     }
+
     .zone:active {
-      background-color: rgba(0, 123, 255, 0.3) !important;
+      background-color: rgba(0, 123, 255, 0.3);
     }
+
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -38,6 +44,7 @@
       display: none;
       z-index: 99;
     }
+
     .modal {
       position: fixed;
       top: 50%;
@@ -51,10 +58,12 @@
       display: none;
       z-index: 100;
     }
+
     .modal h3 {
       margin-top: 0;
       font-size: 18px;
     }
+
     .modal p {
       font-size: 16px;
     }
@@ -89,9 +98,8 @@
           div.style.top = z.top + "%";
           div.style.width = z.width + "%";
           div.style.height = z.height + "%";
-
-          // минимальная прозрачность — только при касании .zone:active
-          div.dataset.type = z.type;
+          div.dataset.info = z.info;
+          div.dataset.detail = z.detail;
 
           div.addEventListener("click", () => {
             modalTitle.textContent = z.info;
