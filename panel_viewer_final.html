@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Просмотр схемы</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #f7f7f7;
+    }
+    .container {
+      position: relative;
+      max-width: 800px;
+      margin: 20px auto;
+      background: #fff;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    img {
+      width: 100%;
+      display: block;
+    }
+    .zone {
+      position: absolute;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .zone[data-type="свет"]:hover {
+      background-color: rgba(0, 128, 255, 0.3);
+    }
+    .zone[data-type="розетки"]:hover {
+      background-color: rgba(255, 0, 0, 0.3);
+    }
+    .zone[data-type="теплый пол"]:hover {
+      background-color: rgba(255, 165, 0, 0.3);
+    }
+    .tooltip {
+      position: absolute;
+      background: #ffffff;
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      border-radius: 6px;
+      display: none;
+      z-index: 10;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      pointer-events: none;
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      z-index: 99;
+    }
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 90%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 100;
+      animation: fadeIn 0.3s ease-out;
+    }
+    .modal h3 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+    @keyframes fadeIn {
+      from { transform: translate(-50%, -60%); opacity: 0; }
+      to { transform: translate(-50%, -50%); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="panel">
+    <img src="panel_v2.png" alt="Электрощит" />
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+
+  <div class="modal-overlay" id="overlay"></div>
+  <div class="modal" id="modal">
+    <h3 id="modal-title">Заголовок</h3>
+    <p id="modal-body">Описание</p>
+  </div>
+
+  <script>
+    const panel = document.getElementById('panel');
+    const tooltip = document.getElementById('tooltip');
+    const modal = document.getElementById('modal');
+    const overlay = document.getElementById('overlay');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+
+    fetch("zones.json")
+      .then(res => res.json())
+      .then(zones => {
+        zones.forEach(z => {
+          const div = document.createElement("div");
+          div.className = "zone";
+          div.style.left = z.x + "px";
+          div.style.top = z.y + "px";
+          div.style.width = z.width + "px";
+          div.style.height = z.height + "px";
+          div.dataset.info = z.info;
+          div.dataset.detail = z.detail;
+          div.dataset.type = z.type;
+
+          div.addEventListener("mouseenter", e => {
+            tooltip.textContent = z.info;
+            tooltip.style.left = e.pageX + 10 + "px";
+            tooltip.style.top = e.pageY + 10 + "px";
+            tooltip.style.display = "block";
+          });
+
+          div.addEventListener("mouseleave", () => {
+            tooltip.style.display = "none";
+          });
+
+          div.addEventListener("click", () => {
+            modalTitle.textContent = z.info;
+            modalBody.textContent = z.detail;
+            modal.style.display = "block";
+            overlay.style.display = "block";
+          });
+
+          panel.appendChild(div);
+        });
+      });
+
+    overlay.addEventListener("click", () => {
+      modal.style.display = "none";
+      overlay.style.display = "none";
+    });
+  </script>
+</body>
+</html>
