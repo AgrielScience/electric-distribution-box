@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Интерактивный электрощит</title>
+  <title>Интерактивный щит</title>
   <style>
     body {
       margin: 0;
@@ -30,11 +30,23 @@
       position: absolute;
       border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.2s ease;
     }
 
     .zone:active {
       background-color: rgba(0, 123, 255, 0.3);
+    }
+
+    .label {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 2px solid #000;
+      color: #000;
+      font-weight: bold;
+      text-align: center;
+      pointer-events: none;
     }
 
     .modal-overlay {
@@ -90,25 +102,39 @@
 
     fetch("zones.json")
       .then(res => res.json())
-      .then(zones => {
-        zones.forEach(z => {
-          const div = document.createElement("div");
-          div.className = "zone";
-          div.style.left = z.left + "%";
-          div.style.top = z.top + "%";
-          div.style.width = z.width + "%";
-          div.style.height = z.height + "%";
-          div.dataset.info = z.info;
-          div.dataset.detail = z.detail;
+      .then(items => {
+        items.forEach(z => {
+          if (z.kind === "zone") {
+            const div = document.createElement("div");
+            div.className = "zone";
+            div.style.left = z.left + "%";
+            div.style.top = z.top + "%";
+            div.style.width = z.width + "%";
+            div.style.height = z.height + "%";
+            div.dataset.info = z.info;
+            div.dataset.detail = z.detail;
 
-          div.addEventListener("click", () => {
-            modalTitle.textContent = z.info;
-            modalBody.textContent = z.detail;
-            modal.style.display = "block";
-            overlay.style.display = "block";
-          });
+            div.addEventListener("click", () => {
+              modalTitle.textContent = z.info;
+              modalBody.textContent = z.detail;
+              modal.style.display = "block";
+              overlay.style.display = "block";
+            });
 
-          panel.appendChild(div);
+            panel.appendChild(div);
+          }
+
+          if (z.kind === "label") {
+            const label = document.createElement("div");
+            label.className = "label";
+            label.style.left = z.left + "%";
+            label.style.top = z.top + "%";
+            label.style.width = z.width + "%";
+            label.style.height = z.height + "%";
+            label.style.fontSize = (z.fontSize || 14) + "px";
+            label.textContent = z.text;
+            panel.appendChild(label);
+          }
         });
       });
 
