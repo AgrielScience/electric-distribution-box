@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Просмотр схемы (мобильная версия)</title>
+  <title>Просмотр схемы (адаптивный)</title>
   <style>
     body {
       margin: 0;
@@ -13,11 +13,12 @@
     }
     .container {
       position: relative;
-      max-width: 800px;
+      max-width: 100%;
+      width: 100%;
       margin: 0 auto;
       background: #fff;
     }
-    img {
+    .container img {
       width: 100%;
       display: block;
     }
@@ -27,14 +28,8 @@
       cursor: pointer;
       transition: background-color 0.2s ease;
     }
-    .zone[data-type="свет"] {
-      background-color: rgba(0, 128, 255, 0.2);
-    }
-    .zone[data-type="розетки"] {
-      background-color: rgba(255, 0, 0, 0.2);
-    }
-    .zone[data-type="теплый пол"] {
-      background-color: rgba(255, 165, 0, 0.2);
+    .zone:active {
+      background-color: rgba(0, 123, 255, 0.3) !important;
     }
     .modal-overlay {
       position: fixed;
@@ -90,12 +85,12 @@
         zones.forEach(z => {
           const div = document.createElement("div");
           div.className = "zone";
-          div.style.left = z.x + "px";
-          div.style.top = z.y + "px";
-          div.style.width = z.width + "px";
-          div.style.height = z.height + "px";
-          div.dataset.info = z.info;
-          div.dataset.detail = z.detail;
+          div.style.left = z.left + "%";
+          div.style.top = z.top + "%";
+          div.style.width = z.width + "%";
+          div.style.height = z.height + "%";
+
+          // минимальная прозрачность — только при касании .zone:active
           div.dataset.type = z.type;
 
           div.addEventListener("click", () => {
